@@ -49,6 +49,27 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+# 安装 expect 工具，用于处理交互式输入
+RUN apt-get update && apt-get install -y expect
+
+# 创建 expect 脚本文件
+RUN echo '#!/usr/bin/expect -f' > run_nexus.expect && \
+    echo 'set timeout 10' >> run_nexus.expect && \
+    echo 'while { 1 } {' >> run_nexus.expect && \
+    echo '    spawn ./nexus-network start --env beta' >> run_nexus.expect && \
+    echo '    expect {' >> run_nexus.expect && \
+    echo '        "Do you want to use the existing user account? (y/n)" { send "y\r"; exp_continue }' >> run_nexus.expect && \
+    echo '        timeout { }' >> run_nexus.expect && \
+    echo '        eof { break }' >> run_nexus.expect && \
+    echo '    }' >> run_nexus.expect && \
+    echo '}' >> run_nexus.expect
+
+# 赋予 expect 脚本执行权限
+RUN chmod +x run_nexus.expect
+
+# 运行 expect 脚本
+CMD ["./run_nexus.expect"]
+
 # 运行项目
-CMD ["./nexus-network", "start", "--env", "beta"]
-#CMD ["cargo", "run", "-r", "--", "start", "--env", "beta"]
+# CMD ["./nexus-network", "start", "--env", "beta"]
+# CMD ["cargo", "run", "-r", "--", "start", "--env", "beta"]
