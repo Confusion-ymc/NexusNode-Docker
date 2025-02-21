@@ -8,10 +8,13 @@ name: Docker-Build-AMD64
 on:
   push:
     branches: [ "main" ]
-    # Publish semver tags as releases.
+    paths:
+      - 'Dockerfile'
     tags: [ 'v*.*.*' ]
   pull_request:
     branches: [ "main" ]
+    paths:
+      - 'Dockerfile'
 
 env:
   # Use docker.io for Docker Hub
