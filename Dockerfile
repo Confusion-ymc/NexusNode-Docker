@@ -52,18 +52,17 @@ RUN apt-get update && \
 # 安装 expect 工具，用于处理交互式输入
 RUN apt-get update && apt-get install -y expect
 
-# 创建 expect 脚本文件
-RUN echo '#!/usr/bin/expect -f' > run_nexus.expect && \
-    echo 'while { 1 } {' >> run_nexus.expect && \
-    echo '    spawn ./nexus-network start --env beta' >> run_nexus.expect && \
-    echo '    expect {' >> run_nexus.expect && \
-    echo '        "Do you want to use the existing user account? (y/n)" { send "y\r"; exp_continue }' >> run_nexus.expect && \
-    echo '        eof { }' >> run_nexus.expect && \
-    echo '    }' >> run_nexus.expect && \
-    echo '}' >> run_nexus.expect
+# 创建 run_nexus_network.sh 文件并写入脚本内容
+RUN echo '#!/bin/bash' > run_nexus_network.sh && \
+    echo '# 首次运行' >> run_nexus_network.sh && \
+    echo './nexus-network start --env beta' >> run_nexus_network.sh && \
+    echo '# 循环执行' >> run_nexus_network.sh && \
+    echo 'while true; do' >> run_nexus_network.sh && \
+    echo '    echo y | ./nexus-network start --env beta' >> run_nexus_network.sh && \
+    echo 'done' >> run_nexus_network.sh
 
-# 赋予 expect 脚本执行权限
-RUN chmod +x run_nexus.expect
+# 为脚本添加可执行权限
+RUN chmod +x run_nexus_network.sh
 
-# 运行 expect 脚本
-CMD ["./run_nexus.expect"]
+# 设置容器启动时执行的命令，即运行脚本
+CMD ["./run_nexus_network.sh"]
