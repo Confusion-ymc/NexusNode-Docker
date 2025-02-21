@@ -1,4 +1,4 @@
-name: Docker
+name: Docker-Build-AMD64
 
 # This workflow uses actions that are not certified by GitHub.
 # They are provided by a third-party and are governed by
@@ -7,11 +7,11 @@ name: Docker
 
 on:
   push:
-    branches: [ "latest" ]
+    branches: [ "main" ]
     # Publish semver tags as releases.
     tags: [ 'v*.*.*' ]
   pull_request:
-    branches: [ "latest" ]
+    branches: [ "main" ]
 
 env:
   # Use docker.io for Docker Hub
@@ -19,7 +19,8 @@ env:
   # Set the Docker Hub username and repository name
   DOCKERHUB_USERNAME: confusionymc
   DOCKERHUB_REPOSITORY: nexus-cli-node
-
+  DOCKERHUB_TAG: latest
+  
 jobs:
   build:
 
@@ -74,7 +75,7 @@ jobs:
         with:
           context: .
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: ${{ env.DOCKERHUB_TAG }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
