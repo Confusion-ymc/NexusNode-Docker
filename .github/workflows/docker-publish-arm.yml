@@ -6,6 +6,7 @@ name: Docker-Build-ARM
 # documentation.
 
 on:
+  workflow_dispatch:
   push:
     branches: [ "main" ]
     paths:
