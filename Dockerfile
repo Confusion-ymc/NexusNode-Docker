@@ -34,9 +34,6 @@ RUN cargo build --release
 # 第二阶段：运行阶段
 FROM ubuntu
 
-# 创建应用目录
-WORKDIR /
-
 # 从构建阶段复制可执行文件
 COPY --from=builder /network-api /network-api
 
@@ -48,9 +45,6 @@ RUN apt-get update && \
     # 清理 apt 缓存以减小镜像体积
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
-
-# 安装 expect 工具，用于处理交互式输入
-RUN apt-get update && apt-get install -y expect
 
 # 创建 run_nexus_network.sh 文件并写入脚本内容
 RUN echo '#!/bin/bash' > run_nexus_network.sh && \
