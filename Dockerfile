@@ -54,13 +54,11 @@ RUN apt-get update && apt-get install -y expect
 
 # 创建 expect 脚本文件
 RUN echo '#!/usr/bin/expect -f' > run_nexus.expect && \
-    echo 'set timeout 10' >> run_nexus.expect && \
     echo 'while { 1 } {' >> run_nexus.expect && \
     echo '    spawn ./nexus-network start --env beta' >> run_nexus.expect && \
     echo '    expect {' >> run_nexus.expect && \
     echo '        "Do you want to use the existing user account? (y/n)" { send "y\r"; exp_continue }' >> run_nexus.expect && \
-    echo '        timeout { }' >> run_nexus.expect && \
-    echo '        eof { break }' >> run_nexus.expect && \
+    echo '        eof { }' >> run_nexus.expect && \
     echo '    }' >> run_nexus.expect && \
     echo '}' >> run_nexus.expect
 
@@ -69,7 +67,3 @@ RUN chmod +x run_nexus.expect
 
 # 运行 expect 脚本
 CMD ["./run_nexus.expect"]
-
-# 运行项目
-# CMD ["./nexus-network", "start", "--env", "beta"]
-# CMD ["cargo", "run", "-r", "--", "start", "--env", "beta"]
